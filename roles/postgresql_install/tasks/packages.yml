@@ -1,0 +1,6 @@
+---
+- name: Install PostgreSQL 18 packages
+  ansible.builtin.dnf:
+    name: "{{ postgresql_packages }}"
+    state: present
+    update_cache: true

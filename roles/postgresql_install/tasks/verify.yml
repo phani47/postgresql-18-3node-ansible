@@ -1,0 +1,23 @@
+---
+- name: Verify PostgreSQL binary exists
+  ansible.builtin.stat:
+    path: "{{ postgresql_bin_path }}/postgres"
+  register: postgresql_binary
+
+- name: Assert PostgreSQL binary exists
+  ansible.builtin.assert:
+    that:
+      - postgresql_binary.stat.exists
+      - postgresql_binary.stat.isreg
+    fail_msg: "PostgreSQL binary not found at {{ postgresql_bin_path }}/postgres"
+    success_msg: "PostgreSQL binary found successfully"
+
+- name: Verify PostgreSQL version
+  ansible.builtin.command:
+    cmd: "{{ postgresql_bin_path }}/postgres --version"
+  register: postgresql_version_check
+  changed_when: false
+
+- name: Display PostgreSQL version
+  ansible.builtin.debug:
+    msg: "{{ postgresql_version_check.stdout }}"

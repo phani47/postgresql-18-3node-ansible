@@ -1,3 +1,9 @@
-#SPDX-License-Identifier: MIT-0
 ---
-# tasks file for roles/postgresql_install
+- name: Configure PostgreSQL repository
+  ansible.builtin.import_tasks: repository.yml
+
+- name: Install PostgreSQL packages
+  ansible.builtin.import_tasks: packages.yml
+
+- name: Verify PostgreSQL installation
+  ansible.builtin.import_tasks: verify.yml

@@ -1,0 +1,8 @@
+---
+- name: PostgreSQL 18 Installation
+  hosts: postgresql
+  become: true
+  gather_facts: true
+
+  roles:
+    - postgresql_install

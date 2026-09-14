@@ -1,0 +1,59 @@
+---
+# ============================================================
+# PostgreSQL PGDG Repository - Architecture Specific GPG Setup
+# ============================================================
+
+- name: Display system architecture
+  ansible.builtin.debug:
+    msg:
+      - "Architecture: {{ ansible_facts['architecture'] }}"
+      - "Distribution: {{ ansible_facts['distribution'] }}"
+      - "Version: {{ ansible_facts['distribution_major_version'] }}"
+
+# ------------------------------------------------------------
+# AARCH64 PGDG GPG KEY
+# ------------------------------------------------------------
+
+- name: Download PGDG GPG key for AARCH64
+  ansible.builtin.get_url:
+    url: "{{ pgdg_gpg_key_aarch64_url }}"
+    dest: "{{ pgdg_gpg_key_aarch64_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+  when: ansible_facts["architecture"] == "aarch64"
+
+- name: Import PGDG GPG key for AARCH64
+  ansible.builtin.rpm_key:
+    state: present
+    key: "{{ pgdg_gpg_key_aarch64_path }}"
+  when: ansible_facts["architecture"] == "aarch64"
+
+# ------------------------------------------------------------
+# INSTALL POSTGRESQL 18
+# ------------------------------------------------------------
+
+- name: Clean DNF package cache
+  ansible.builtin.command:
+    cmd: dnf clean packages
+  changed_when: false
+
+- name: Install PostgreSQL {{ postgresql_version }} packages
+  ansible.builtin.dnf:
+    name: "{{ postgresql_packages }}"
+    state: present
+    update_cache: true
+
+# ------------------------------------------------------------
+# VALIDATION
+# ------------------------------------------------------------
+
+- name: Verify PostgreSQL installation
+  ansible.builtin.command:
+    cmd: /usr/pgsql-{{ postgresql_version }}/bin/postgres --version
+  register: postgresql_version_output
+  changed_when: false
+
+- name: Display PostgreSQL version
+  ansible.builtin.debug:
+    msg: "{{ postgresql_version_output.stdout }}"
