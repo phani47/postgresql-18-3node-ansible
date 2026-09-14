@@ -1,0 +1,42 @@
+---
+# PostgreSQL Cleanup Verification
+
+- name: Verify PostgreSQL packages are removed
+  ansible.builtin.shell: |
+    rpm -qa | grep -i '^postgresql' || true
+  register: verify_packages
+  changed_when: false
+
+- name: Verify PostgreSQL processes are stopped
+  ansible.builtin.shell: |
+    ps -eo pid,user,args | grep '[p]ostgres' || true
+  register: verify_processes
+  changed_when: false
+
+- name: Verify PostgreSQL directories are removed
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop: "{{ postgresql_cleanup_data_directories + postgresql_custom_binary_paths }}"
+  register: verify_directories
+
+- name: Assert PostgreSQL packages are removed
+  ansible.builtin.assert:
+    that:
+      - verify_packages.stdout == ""
+    fail_msg: "PostgreSQL packages still exist."
+    success_msg: "PostgreSQL packages successfully removed."
+
+- name: Assert PostgreSQL processes are stopped
+  ansible.builtin.assert:
+    that:
+      - verify_processes.stdout == ""
+    fail_msg: "PostgreSQL processes are still running."
+    success_msg: "No PostgreSQL processes are running."
+
+- name: Assert PostgreSQL directories are removed
+  ansible.builtin.assert:
+    that:
+      - item.stat.exists == false
+    fail_msg: "Directory still exists: {{ item.item }}"
+    success_msg: "Directory removed: {{ item.item }}"
+  loop: "{{ verify_directories.results }}"

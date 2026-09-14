@@ -1,0 +1,11 @@
+---
+- name: Validate cleanup confirmation
+  ansible.builtin.assert:
+    that:
+      - postgresql_cleanup_confirm | bool
+    fail_msg: >
+      PostgreSQL cleanup is destructive.
+      Set postgresql_cleanup_confirm=true
+      to explicitly allow cleanup.
+    success_msg: >
+      PostgreSQL cleanup confirmation received.

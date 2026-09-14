@@ -1,0 +1,7 @@
+---
+- name: PostgreSQL Environment Cleanup
+  hosts: postgresql
+  become: true
+
+  roles:
+    - role: cleanup

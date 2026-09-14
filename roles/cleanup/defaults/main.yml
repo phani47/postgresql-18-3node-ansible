@@ -1,3 +1,24 @@
-#SPDX-License-Identifier: MIT-0
 ---
-# defaults file for roles/cleanup
+# ============================================================
+# PostgreSQL Cleanup Safety Configuration
+# ============================================================
+
+# Destructive cleanup requires explicit confirmation
+postgresql_cleanup_confirm: false
+
+# PostgreSQL systemd services
+postgresql_cleanup_services:
+  - postgresql-18.service
+  - postgresql.service
+
+# Custom PostgreSQL binary locations discovered during preflight
+postgresql_custom_binary_paths:
+  - /pgbinary
+
+# PostgreSQL data directories
+postgresql_cleanup_data_directories:
+  - /pgdata
+  - /var/lib/pgsql
+
+# PostgreSQL package search pattern
+postgresql_cleanup_package_pattern: "postgresql"

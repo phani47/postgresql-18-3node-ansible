@@ -1,0 +1,19 @@
+---
+# PostgreSQL Service Cleanup
+
+- name: Gather service facts
+  ansible.builtin.service_facts:
+
+- name: Display discovered PostgreSQL services
+  ansible.builtin.debug:
+    msg: "{{ item }} found"
+  loop: "{{ postgresql_cleanup_services }}"
+  when: item in ansible_facts.services
+
+- name: Stop PostgreSQL services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  loop: "{{ postgresql_cleanup_services }}"
+  when: item in ansible_facts.services

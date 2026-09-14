@@ -1,0 +1,27 @@
+---
+# PostgreSQL Process Cleanup
+
+- name: Discover PostgreSQL processes
+  ansible.builtin.shell: |
+    ps -eo pid,user,args | grep '[p]ostgres' || true
+  register: postgres_processes
+  changed_when: false
+
+- name: Display discovered PostgreSQL processes
+  ansible.builtin.debug:
+    var: postgres_processes.stdout_lines
+
+- name: Stop custom PostgreSQL processes
+  ansible.builtin.shell: |
+    pkill -TERM -u postgres -f '/pgbinary/pgbin/bin/postgres' || true
+  register: postgres_stop_result
+  changed_when: postgres_stop_result.rc == 0
+
+- name: Wait for custom PostgreSQL processes to stop
+  ansible.builtin.shell: |
+    pgrep -u postgres -f '/pgbinary/pgbin/bin/postgres' || true
+  register: postgres_process_check
+  retries: 5
+  delay: 2
+  until: postgres_process_check.stdout == ""
+  changed_when: false

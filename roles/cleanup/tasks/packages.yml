@@ -1,0 +1,18 @@
+---
+# PostgreSQL Package Cleanup
+
+- name: Discover installed PostgreSQL packages
+  ansible.builtin.shell: |
+    rpm -qa | grep -i '^postgresql' || true
+  register: postgresql_packages
+  changed_when: false
+
+- name: Display installed PostgreSQL packages
+  ansible.builtin.debug:
+    var: postgresql_packages.stdout_lines
+
+- name: Remove PostgreSQL packages
+  ansible.builtin.dnf:
+    name: "{{ postgresql_packages.stdout_lines }}"
+    state: absent
+  when: postgresql_packages.stdout_lines | length > 0

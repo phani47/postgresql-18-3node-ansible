@@ -1,3 +1,20 @@
-#SPDX-License-Identifier: MIT-0
 ---
-# tasks file for roles/cleanup
+# PostgreSQL Environment Cleanup Workflow
+
+- name: Validate cleanup request
+  ansible.builtin.import_tasks: validate.yml
+
+- name: Stop PostgreSQL services
+  ansible.builtin.import_tasks: services.yml
+
+- name: Stop PostgreSQL processes
+  ansible.builtin.import_tasks: processes.yml
+
+- name: Remove PostgreSQL packages
+  ansible.builtin.import_tasks: packages.yml
+
+- name: Remove PostgreSQL directories
+  ansible.builtin.import_tasks: directories.yml
+
+- name: Verify PostgreSQL cleanup
+  ansible.builtin.import_tasks: verify.yml

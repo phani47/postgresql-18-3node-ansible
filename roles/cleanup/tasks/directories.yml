@@ -1,0 +1,18 @@
+---
+# PostgreSQL Directory Cleanup
+
+- name: Display PostgreSQL directories scheduled for cleanup
+  ansible.builtin.debug:
+    var: postgresql_cleanup_data_directories
+
+- name: Remove PostgreSQL data directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ postgresql_cleanup_data_directories }}"
+
+- name: Remove custom PostgreSQL binary directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ postgresql_custom_binary_paths }}"
