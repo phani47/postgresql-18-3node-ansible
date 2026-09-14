@@ -1,3 +1,13 @@
-#SPDX-License-Identifier: MIT-0
 ---
-# tasks file for roles/os_prepare
+
+- name: Install required operating system packages
+  ansible.builtin.import_tasks: packages.yml
+
+- name: Prepare PostgreSQL directories
+  ansible.builtin.import_tasks: directories.yml
+
+- name: Configure operating system services
+  ansible.builtin.import_tasks: system.yml
+
+- name: Verify operating system preparation
+  ansible.builtin.import_tasks: verify.yml

@@ -1,3 +1,26 @@
-#SPDX-License-Identifier: MIT-0
 ---
-# defaults file for roles/os_prepare
+
+# Required operating system packages
+postgresql_os_packages:
+  - vim
+  - curl
+  - wget
+  - tar
+  - unzip
+  - firewalld
+  - chrony
+
+# PostgreSQL OS user
+postgresql_os_user: postgres
+postgresql_os_group: postgres
+
+# PostgreSQL directories
+postgresql_base_directories:
+  - /pgdata
+  - /pgbinary
+  - /pgwal
+  - /pgarchive
+
+# Directory ownership
+postgresql_directory_owner: postgres
+postgresql_directory_group: postgres

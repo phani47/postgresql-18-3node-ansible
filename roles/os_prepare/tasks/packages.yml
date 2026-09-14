@@ -1,0 +1,6 @@
+---
+
+- name: Install required operating system packages
+  ansible.builtin.dnf:
+    name: "{{ postgresql_os_packages }}"
+    state: present

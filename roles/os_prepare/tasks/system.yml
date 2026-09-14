@@ -1,0 +1,13 @@
+---
+
+- name: Enable and start Chrony
+  ansible.builtin.systemd:
+    name: chronyd
+    state: started
+    enabled: true
+
+- name: Enable firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+    enabled: true

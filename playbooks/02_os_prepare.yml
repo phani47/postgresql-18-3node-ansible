@@ -1,0 +1,8 @@
+---
+
+- name: PostgreSQL Operating System Preparation
+  hosts: postgresql
+  become: true
+
+  roles:
+    - role: os_prepare

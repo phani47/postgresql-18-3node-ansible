@@ -1,0 +1,22 @@
+---
+
+- name: Ensure PostgreSQL group exists
+  ansible.builtin.group:
+    name: "{{ postgresql_os_group }}"
+    state: present
+
+- name: Ensure PostgreSQL user exists
+  ansible.builtin.user:
+    name: "{{ postgresql_os_user }}"
+    group: "{{ postgresql_os_group }}"
+    state: present
+    create_home: true
+
+- name: Create PostgreSQL directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ postgresql_directory_owner }}"
+    group: "{{ postgresql_directory_group }}"
+    mode: "0750"
+  loop: "{{ postgresql_base_directories }}"

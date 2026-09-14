@@ -1,0 +1,23 @@
+---
+
+- name: Verify PostgreSQL directories
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop: "{{ postgresql_base_directories }}"
+  register: postgresql_directory_check
+
+- name: Verify PostgreSQL directories exist
+  ansible.builtin.assert:
+    that:
+      - item.stat.exists
+      - item.stat.isdir
+    success_msg: "Directory verified: {{ item.item }}"
+    fail_msg: "Directory verification failed: {{ item.item }}"
+  loop: "{{ postgresql_directory_check.results }}"
+
+- name: Display OS preparation summary
+  ansible.builtin.debug:
+    msg:
+      - "OS preparation completed successfully"
+      - "PostgreSQL user: {{ postgresql_os_user }}"
+      - "Directories: {{ postgresql_base_directories }}"
