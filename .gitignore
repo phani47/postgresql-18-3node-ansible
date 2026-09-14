@@ -1,0 +1,12 @@
+*.retry
+
+__pycache__/
+*.pyc
+
+.ansible/
+
+.vagrant/
+
+*.log
+
+.vault_pass

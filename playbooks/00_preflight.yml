@@ -1,0 +1,10 @@
+---
+- name: PostgreSQL Cluster Preflight Validation
+  hosts: postgresql
+  become: true
+  gather_facts: false
+
+  roles:
+    - role: preflight
+      tags:
+        - preflight

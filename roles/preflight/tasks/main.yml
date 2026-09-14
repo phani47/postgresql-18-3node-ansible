@@ -1,0 +1,77 @@
+---
+# ============================================================
+# PostgreSQL Cluster Preflight Validation
+# ============================================================
+
+- name: Validate node hostname
+  ansible.builtin.command: hostnamectl --static
+  register: preflight_hostname
+  changed_when: false
+
+- name: Validate operating system
+  ansible.builtin.command: cat /etc/os-release
+  register: preflight_os
+  changed_when: false
+
+- name: Validate Python version
+  ansible.builtin.command: python3 --version
+  register: preflight_python
+  changed_when: false
+
+- name: Discover installed PostgreSQL packages
+  ansible.builtin.shell: |
+    rpm -qa | grep -i '^postgresql' || true
+  register: preflight_postgresql_packages
+  changed_when: false
+
+- name: Discover running PostgreSQL processes
+  ansible.builtin.shell: |
+    ps -ef | grep '[p]ostgres' || true
+  register: preflight_postgresql_processes
+  changed_when: false
+
+- name: Discover PostgreSQL systemd services
+  ansible.builtin.shell: |
+    systemctl list-unit-files | grep -i postgres || true
+  register: preflight_postgresql_services
+  changed_when: false
+
+- name: Check filesystem capacity
+  ansible.builtin.command: df -h
+  register: preflight_filesystem
+  changed_when: false
+
+- name: Check memory
+  ansible.builtin.command: free -h
+  register: preflight_memory
+  changed_when: false
+
+# ============================================================
+# Preflight Summary
+# ============================================================
+
+- name: Display node information
+  ansible.builtin.debug:
+    msg:
+      - "Hostname: {{ preflight_hostname.stdout }}"
+      - "Python: {{ preflight_python.stdout }}"
+
+- name: Display PostgreSQL package discovery
+  ansible.builtin.debug:
+    msg: "{{ preflight_postgresql_packages.stdout_lines }}"
+
+- name: Display PostgreSQL process discovery
+  ansible.builtin.debug:
+    msg: "{{ preflight_postgresql_processes.stdout_lines }}"
+
+- name: Display PostgreSQL service discovery
+  ansible.builtin.debug:
+    msg: "{{ preflight_postgresql_services.stdout_lines }}"
+
+- name: Display filesystem
+  ansible.builtin.debug:
+    msg: "{{ preflight_filesystem.stdout_lines }}"
+
+- name: Display memory
+  ansible.builtin.debug:
+    msg: "{{ preflight_memory.stdout_lines }}"
