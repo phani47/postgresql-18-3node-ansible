@@ -1,0 +1,27 @@
+---
+- name: Ensure PostgreSQL data directory exists
+  ansible.builtin.file:
+    path: "{{ postgresql_data_dir }}"
+    state: directory
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+    mode: "0700"
+
+- name: Verify PostgreSQL data directory ownership
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}"
+  register: postgresql_data_directory
+
+- name: Assert PostgreSQL data directory permissions
+  ansible.builtin.assert:
+    that:
+      - postgresql_data_directory.stat.exists
+      - postgresql_data_directory.stat.isdir
+      - postgresql_data_directory.stat.pw_name == postgresql_user
+      - postgresql_data_directory.stat.gr_name == postgresql_group
+      - postgresql_data_directory.stat.mode == "0700"
+    fail_msg: >
+      PostgreSQL data directory validation failed:
+      {{ postgresql_data_dir }}
+    success_msg: >
+      PostgreSQL data directory is correctly configured.

@@ -1,0 +1,21 @@
+---
+- name: Initialize PostgreSQL cluster
+  ansible.builtin.command:
+    cmd: >
+      runuser -u {{ postgresql_user }} -- 
+      {{ postgresql_bin_path }}/initdb
+      --pgdata={{ postgresql_data_dir }}
+      --encoding={{ postgresql_initdb_encoding }}
+      --locale={{ postgresql_initdb_locale }}
+      --auth-local={{ postgresql_initdb_auth_local }}
+      --auth-host={{ postgresql_initdb_auth_host }}
+  when: not postgresql_cluster_version_file.stat.exists
+  register: postgresql_initdb_result
+  changed_when: true
+
+- name: Display initdb output
+  ansible.builtin.debug:
+    var: postgresql_initdb_result.stdout_lines
+  when:
+    - postgresql_initdb_result is defined
+    - postgresql_initdb_result is changed

@@ -1,0 +1,38 @@
+---
+- name: Verify PostgreSQL operating system user exists
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ postgresql_user }}"
+
+- name: Verify PostgreSQL group exists
+  ansible.builtin.getent:
+    database: group
+    key: "{{ postgresql_group }}"
+
+- name: Verify PostgreSQL binary exists
+  ansible.builtin.stat:
+    path: "{{ postgresql_bin_path }}/initdb"
+  register: postgresql_initdb_binary
+
+- name: Assert PostgreSQL initdb binary exists
+  ansible.builtin.assert:
+    that:
+      - postgresql_initdb_binary.stat.exists
+      - postgresql_initdb_binary.stat.executable
+    fail_msg: >
+      PostgreSQL initdb binary was not found at
+      {{ postgresql_bin_path }}/initdb
+    success_msg: >
+      PostgreSQL initdb binary found at
+      {{ postgresql_bin_path }}/initdb
+
+- name: Check whether PostgreSQL cluster is already initialized
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}/PG_VERSION"
+  register: postgresql_cluster_version_file
+
+- name: Display initialization status
+  ansible.builtin.debug:
+    msg:
+      - "PostgreSQL data directory: {{ postgresql_data_dir }}"
+      - "Cluster initialized: {{ postgresql_cluster_version_file.stat.exists }}"

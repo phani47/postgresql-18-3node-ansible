@@ -1,3 +1,12 @@
-#SPDX-License-Identifier: MIT-0
 ---
-# tasks file for roles/postgresql_init
+- name: Run PostgreSQL initialization prechecks
+  ansible.builtin.import_tasks: precheck.yml
+
+- name: Prepare PostgreSQL data directory
+  ansible.builtin.import_tasks: directories.yml
+
+- name: Initialize PostgreSQL cluster
+  ansible.builtin.import_tasks: initdb.yml
+
+- name: Verify PostgreSQL cluster initialization
+  ansible.builtin.import_tasks: verify.yml

@@ -1,0 +1,7 @@
+---
+- name: PostgreSQL 18 Cluster Initialization
+  hosts: postgresql
+  become: true
+
+  roles:
+    - role: postgresql_init

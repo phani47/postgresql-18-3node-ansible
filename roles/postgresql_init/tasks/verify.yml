@@ -1,0 +1,56 @@
+---
+- name: Verify PG_VERSION file
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}/PG_VERSION"
+  register: postgresql_pg_version
+
+- name: Read PostgreSQL cluster version
+  ansible.builtin.slurp:
+    src: "{{ postgresql_data_dir }}/PG_VERSION"
+  register: postgresql_pg_version_content
+
+- name: Assert PostgreSQL cluster is initialized
+  ansible.builtin.assert:
+    that:
+      - postgresql_pg_version.stat.exists
+      - postgresql_pg_version.stat.isreg
+    fail_msg: >
+      PostgreSQL cluster initialization failed.
+      PG_VERSION not found in {{ postgresql_data_dir }}
+    success_msg: >
+      PostgreSQL cluster initialized successfully.
+
+- name: Display PostgreSQL cluster version
+  ansible.builtin.debug:
+    msg: >
+      PostgreSQL cluster version:
+      {{ postgresql_pg_version_content.content | b64decode | trim }}
+
+- name: Verify PostgreSQL configuration file
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}/postgresql.conf"
+  register: postgresql_conf
+
+- name: Verify PostgreSQL HBA configuration
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}/pg_hba.conf"
+  register: postgresql_hba
+
+- name: Assert PostgreSQL configuration files exist
+  ansible.builtin.assert:
+    that:
+      - postgresql_conf.stat.exists
+      - postgresql_hba.stat.exists
+    fail_msg: >
+      PostgreSQL configuration files were not created.
+    success_msg: >
+      PostgreSQL configuration files verified.
+
+- name: Display PostgreSQL initialization summary
+  ansible.builtin.debug:
+    msg:
+      - "PostgreSQL version: {{ postgresql_version }}"
+      - "Data directory: {{ postgresql_data_dir }}"
+      - "PG_VERSION: {{ postgresql_pg_version_content.content | b64decode | trim }}"
+      - "postgresql.conf: present"
+      - "pg_hba.conf: present"

@@ -1,3 +1,17 @@
-#SPDX-License-Identifier: MIT-0
 ---
-# defaults file for roles/postgresql_init
+# PostgreSQL Cluster Initialization Configuration
+
+postgresql_version: "18"
+
+postgresql_user: "postgres"
+postgresql_group: "postgres"
+
+postgresql_bin_path: "/usr/pgsql-{{ postgresql_version }}/bin"
+
+postgresql_data_dir: "/pgdata"
+
+postgresql_initdb_locale: "C.UTF-8"
+postgresql_initdb_encoding: "UTF8"
+
+postgresql_initdb_auth_local: "peer"
+postgresql_initdb_auth_host: "scram-sha-256"
