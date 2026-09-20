@@ -1,0 +1,25 @@
+---
+- name: Verify PostgreSQL data directory exists
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}"
+  register: postgresql_data_dir_stat
+
+- name: Assert PostgreSQL data directory exists
+  ansible.builtin.assert:
+    that:
+      - postgresql_data_dir_stat.stat.exists
+      - postgresql_data_dir_stat.stat.isdir
+    fail_msg: "PostgreSQL data directory is missing: {{ postgresql_data_dir }}"
+    success_msg: "PostgreSQL data directory confirmed."
+
+- name: Verify PostgreSQL configuration exists
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}/postgresql.conf"
+  register: postgresql_conf_stat
+
+- name: Assert PostgreSQL configuration exists
+  ansible.builtin.assert:
+    that:
+      - postgresql_conf_stat.stat.exists
+    fail_msg: "PostgreSQL configuration file is missing."
+    success_msg: "PostgreSQL configuration confirmed."

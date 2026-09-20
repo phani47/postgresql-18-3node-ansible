@@ -1,0 +1,9 @@
+---
+postgresql_version: "18"
+postgresql_service_name: "postgresql-18"
+postgresql_data_dir: "/pgdata"
+postgresql_port: 5432
+postgresql_user: "postgres"
+postgresql_group: "postgres"
+postgresql_service_state: "started"
+postgresql_service_enabled: true

@@ -1,0 +1,24 @@
+---
+- name: Create PostgreSQL systemd drop-in directory
+  ansible.builtin.file:
+    path: "/etc/systemd/system/{{ postgresql_service_name }}.service.d"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure PostgreSQL PGDATA systemd override
+  ansible.builtin.template:
+    src: override.conf.j2
+    dest: "/etc/systemd/system/{{ postgresql_service_name }}.service.d/override.conf"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload systemd
+
+- name: Enable and start PostgreSQL service
+  ansible.builtin.systemd:
+    name: "{{ postgresql_service_name }}"
+    enabled: "{{ postgresql_service_enabled }}"
+    state: "{{ postgresql_service_state }}"
+    daemon_reload: true

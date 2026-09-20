@@ -1,0 +1,9 @@
+---
+- name: Run PostgreSQL service prechecks
+  ansible.builtin.import_tasks: precheck.yml
+
+- name: Manage PostgreSQL systemd service
+  ansible.builtin.import_tasks: service.yml
+
+- name: Verify PostgreSQL service
+  ansible.builtin.import_tasks: verify.yml

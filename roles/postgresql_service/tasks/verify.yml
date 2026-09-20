@@ -1,0 +1,23 @@
+---
+- name: Gather PostgreSQL service facts
+  ansible.builtin.service_facts:
+
+- name: Assert PostgreSQL service is running
+  ansible.builtin.assert:
+    that:
+      - postgresql_service_name + ".service" in ansible_facts.services
+      - ansible_facts.services[postgresql_service_name + ".service"].state == "running"
+    fail_msg: "PostgreSQL service is not running."
+    success_msg: "PostgreSQL service is running."
+
+- name: Verify PostgreSQL readiness
+  become: true
+  ansible.builtin.command:
+    cmd: "runuser -u postgres -- /usr/pgsql-{{ postgresql_version }}/bin/pg_isready -p {{ postgresql_port }}"
+  register: postgresql_readiness
+  changed_when: false
+  failed_when: postgresql_readiness.rc != 0
+
+- name: Display PostgreSQL readiness
+  ansible.builtin.debug:
+    msg: "{{ postgresql_readiness.stdout }}"
