@@ -1,0 +1,12 @@
+---
+- name: Run PostgreSQL storage prechecks
+  ansible.builtin.import_tasks: precheck.yml
+
+- name: Prepare PostgreSQL WAL storage
+  ansible.builtin.import_tasks: prepare.yml
+
+- name: Migrate PostgreSQL WAL directory
+  ansible.builtin.import_tasks: migrate_wal.yml
+
+- name: Verify PostgreSQL storage layout
+  ansible.builtin.import_tasks: verify.yml

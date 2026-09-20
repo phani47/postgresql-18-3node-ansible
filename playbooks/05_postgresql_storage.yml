@@ -1,0 +1,7 @@
+---
+- name: PostgreSQL 18 Storage and WAL Layout
+  hosts: postgresql
+  become: true
+
+  roles:
+    - role: postgresql_storage

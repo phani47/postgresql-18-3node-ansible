@@ -1,0 +1,51 @@
+---
+# PostgreSQL Configuration
+
+postgresql_version: "18"
+
+postgresql_user: "postgres"
+postgresql_group: "postgres"
+
+postgresql_data_dir: "/pgdata"
+postgresql_wal_dir: "/pgwal"
+
+postgresql_port: 5432
+
+# Network
+postgresql_listen_addresses: "*"
+
+# Connections
+postgresql_max_connections: 100
+
+# Authentication
+postgresql_password_encryption: "scram-sha-256"
+
+# WAL / Replication-ready baseline
+postgresql_wal_level: "replica"
+postgresql_max_wal_senders: 10
+postgresql_max_replication_slots: 10
+
+# Checkpoints
+postgresql_checkpoint_completion_target: 0.9
+
+# Logging
+postgresql_logging_collector: true
+postgresql_log_directory: "log"
+postgresql_log_filename: "postgresql-%Y-%m-%d_%H%M%S.log"
+postgresql_log_rotation_age: "1d"
+postgresql_log_truncate_on_rotation: true
+
+postgresql_log_connections: false
+postgresql_log_disconnections: false
+
+# Timezone
+postgresql_timezone: "UTC"
+
+# Locale
+postgresql_lc_messages: "C.UTF-8"
+postgresql_lc_monetary: "C.UTF-8"
+postgresql_lc_numeric: "C.UTF-8"
+postgresql_lc_time: "C.UTF-8"
+
+# Service
+postgresql_service_name: "postgresql-18"

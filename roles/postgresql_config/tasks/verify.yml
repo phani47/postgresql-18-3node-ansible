@@ -1,0 +1,44 @@
+---
+- name: Verify postgresql.conf exists
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}/postgresql.conf"
+  register: postgresql_conf_file
+
+- name: Verify pg_hba.conf exists
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}/pg_hba.conf"
+  register: postgresql_hba_file
+
+- name: Assert PostgreSQL configuration files exist
+  ansible.builtin.assert:
+    that:
+      - postgresql_conf_file.stat.exists
+      - postgresql_hba_file.stat.exists
+      - postgresql_conf_file.stat.pw_name == postgresql_user
+      - postgresql_hba_file.stat.pw_name == postgresql_user
+    fail_msg: >
+      PostgreSQL configuration validation failed.
+    success_msg: >
+      PostgreSQL configuration files verified.
+
+- name: Verify replication-ready WAL configuration
+  ansible.builtin.shell:
+    cmd: >
+      grep -E '^[[:space:]]*wal_level[[:space:]]*='
+      {{ postgresql_data_dir }}/postgresql.conf
+  register: postgresql_wal_level_check
+  changed_when: false
+
+- name: Display PostgreSQL configuration summary
+  ansible.builtin.debug:
+    msg:
+      - "PostgreSQL version: {{ postgresql_version }}"
+      - "Node: {{ inventory_hostname }}"
+      - "Listen address: {{ postgresql_listen_addresses }}"
+      - "Port: {{ postgresql_port }}"
+      - "Data directory: {{ postgresql_data_dir }}"
+      - "WAL directory: {{ postgresql_wal_dir }}"
+      - "WAL level: {{ postgresql_wal_level }}"
+      - "Max WAL senders: {{ postgresql_max_wal_senders }}"
+      - "Max replication slots: {{ postgresql_max_replication_slots }}"
+      - "pg_hba.conf: present"

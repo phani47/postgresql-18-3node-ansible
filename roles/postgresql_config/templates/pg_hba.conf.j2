@@ -1,0 +1,31 @@
+# ============================================================
+# PostgreSQL {{ postgresql_version }} pg_hba.conf
+# Managed by Ansible
+#
+# Cluster: {{ inventory_hostname }}
+# ============================================================
+
+# ------------------------------------------------------------
+# LOCAL UNIX SOCKET
+# ------------------------------------------------------------
+
+local   all             postgres                                peer
+local   all             all                                     peer
+
+
+# ------------------------------------------------------------
+# LOCALHOST TCP/IP
+# ------------------------------------------------------------
+
+host    all             all             127.0.0.1/32            scram-sha-256
+host    all             all             ::1/128                 scram-sha-256
+
+
+# ------------------------------------------------------------
+# REPLICATION
+# ------------------------------------------------------------
+
+# Replication access will be restricted further when
+# Primary/Standby configuration is implemented.
+#
+# Placeholder intentionally omitted here.

@@ -1,0 +1,27 @@
+---
+- name: Ensure PostgreSQL WAL directory exists
+  ansible.builtin.file:
+    path: "{{ postgresql_wal_dir }}"
+    state: directory
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+    mode: "{{ postgresql_wal_dir_mode }}"
+
+- name: Verify PostgreSQL WAL directory
+  ansible.builtin.stat:
+    path: "{{ postgresql_wal_dir }}"
+  register: postgresql_storage_wal_dir
+
+- name: Assert PostgreSQL WAL directory is correctly configured
+  ansible.builtin.assert:
+    that:
+      - postgresql_storage_wal_dir.stat.exists
+      - postgresql_storage_wal_dir.stat.isdir
+      - postgresql_storage_wal_dir.stat.pw_name == postgresql_user
+      - postgresql_storage_wal_dir.stat.gr_name == postgresql_group
+      - postgresql_storage_wal_dir.stat.mode == postgresql_wal_dir_mode
+    fail_msg: >
+      PostgreSQL WAL directory validation failed:
+      {{ postgresql_wal_dir }}
+    success_msg: >
+      PostgreSQL WAL directory is correctly configured.

@@ -1,0 +1,12 @@
+---
+- name: Run PostgreSQL configuration prechecks
+  ansible.builtin.import_tasks: precheck.yml
+
+- name: Configure postgresql.conf
+  ansible.builtin.import_tasks: postgresql_conf.yml
+
+- name: Configure pg_hba.conf
+  ansible.builtin.import_tasks: pg_hba.yml
+
+- name: Verify PostgreSQL configuration
+  ansible.builtin.import_tasks: verify.yml

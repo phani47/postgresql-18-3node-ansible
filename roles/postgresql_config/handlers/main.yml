@@ -1,0 +1,6 @@
+---
+- name: Restart PostgreSQL
+  ansible.builtin.debug:
+    msg: >
+      PostgreSQL configuration changed.
+      Restart will be handled by the PostgreSQL service-management role.

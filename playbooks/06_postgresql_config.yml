@@ -1,0 +1,7 @@
+---
+- name: PostgreSQL 18 Configuration
+  hosts: postgresql
+  become: true
+
+  roles:
+    - role: postgresql_config

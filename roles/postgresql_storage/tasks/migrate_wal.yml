@@ -1,0 +1,39 @@
+---
+- name: Check whether pg_wal is already a symlink
+  ansible.builtin.stat:
+    path: "{{ postgresql_wal_link }}"
+    follow: false
+  register: postgresql_pg_wal_link
+
+- name: Move existing PostgreSQL WAL contents
+  ansible.builtin.shell:
+    cmd: |
+      set -e
+
+      if [ -d "{{ postgresql_wal_link }}" ] && [ ! -L "{{ postgresql_wal_link }}" ]; then
+        if [ "$(find "{{ postgresql_wal_link }}" -mindepth 1 -maxdepth 1 | wc -l)" -gt 0 ]; then
+          cp -a "{{ postgresql_wal_link }}/." "{{ postgresql_wal_dir }}/"
+        fi
+      fi
+  when:
+    - postgresql_pg_wal_link.stat.exists
+    - postgresql_pg_wal_link.stat.isdir
+    - not postgresql_pg_wal_link.stat.islnk
+  changed_when: true
+
+- name: Remove original PostgreSQL pg_wal directory
+  ansible.builtin.file:
+    path: "{{ postgresql_wal_link }}"
+    state: absent
+  when:
+    - postgresql_pg_wal_link.stat.exists
+    - postgresql_pg_wal_link.stat.isdir
+    - not postgresql_pg_wal_link.stat.islnk
+
+- name: Create PostgreSQL pg_wal symlink
+  ansible.builtin.file:
+    src: "{{ postgresql_wal_dir }}"
+    dest: "{{ postgresql_wal_link }}"
+    state: link
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"

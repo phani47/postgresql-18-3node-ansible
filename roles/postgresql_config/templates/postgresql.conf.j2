@@ -1,0 +1,79 @@
+# ============================================================
+# PostgreSQL {{ postgresql_version }} Configuration
+# Managed by Ansible
+#
+# Cluster: {{ inventory_hostname }}
+# ============================================================
+
+# ------------------------------------------------------------
+# CONNECTIONS AND AUTHENTICATION
+# ------------------------------------------------------------
+
+listen_addresses = '{{ postgresql_listen_addresses }}'
+port = {{ postgresql_port }}
+
+max_connections = {{ postgresql_max_connections }}
+
+password_encryption = '{{ postgresql_password_encryption }}'
+
+
+# ------------------------------------------------------------
+# MEMORY
+# ------------------------------------------------------------
+
+shared_buffers = 128MB
+
+
+# ------------------------------------------------------------
+# WRITE-AHEAD LOG
+# ------------------------------------------------------------
+
+wal_level = '{{ postgresql_wal_level }}'
+
+max_wal_senders = {{ postgresql_max_wal_senders }}
+
+max_replication_slots = {{ postgresql_max_replication_slots }}
+
+checkpoint_completion_target = {{ postgresql_checkpoint_completion_target }}
+
+
+# ------------------------------------------------------------
+# WAL LOCATION
+# ------------------------------------------------------------
+
+# pg_wal is maintained through the /pgdata/pg_wal symlink
+# created by the postgresql_storage role.
+
+
+# ------------------------------------------------------------
+# LOGGING
+# ------------------------------------------------------------
+
+logging_collector = {{ postgresql_logging_collector | ternary('on', 'off') }}
+
+log_directory = '{{ postgresql_log_directory }}'
+
+log_filename = '{{ postgresql_log_filename }}'
+
+log_rotation_age = '{{ postgresql_log_rotation_age }}'
+
+log_truncate_on_rotation = {{ postgresql_log_truncate_on_rotation | ternary('on', 'off') }}
+
+log_connections = {{ postgresql_log_connections | ternary('on', 'off') }}
+
+log_disconnections = {{ postgresql_log_disconnections | ternary('on', 'off') }}
+
+
+# ------------------------------------------------------------
+# TIMEZONE / LOCALE
+# ------------------------------------------------------------
+
+timezone = '{{ postgresql_timezone }}'
+
+lc_messages = '{{ postgresql_lc_messages }}'
+
+lc_monetary = '{{ postgresql_lc_monetary }}'
+
+lc_numeric = '{{ postgresql_lc_numeric }}'
+
+lc_time = '{{ postgresql_lc_time }}'

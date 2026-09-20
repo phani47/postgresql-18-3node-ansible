@@ -1,0 +1,34 @@
+---
+- name: Verify PostgreSQL pg_wal symlink
+  ansible.builtin.stat:
+    path: "{{ postgresql_wal_link }}"
+    follow: false
+  register: postgresql_final_pg_wal
+
+- name: Verify PostgreSQL WAL target
+  ansible.builtin.stat:
+    path: "{{ postgresql_wal_dir }}"
+  register: postgresql_final_wal_dir
+
+- name: Assert PostgreSQL WAL layout
+  ansible.builtin.assert:
+    that:
+      - postgresql_final_pg_wal.stat.exists
+      - postgresql_final_pg_wal.stat.islnk
+      - postgresql_final_pg_wal.stat.lnk_source == postgresql_wal_dir
+      - postgresql_final_wal_dir.stat.exists
+      - postgresql_final_wal_dir.stat.isdir
+      - postgresql_final_wal_dir.stat.pw_name == postgresql_user
+      - postgresql_final_wal_dir.stat.gr_name == postgresql_group
+    fail_msg: >
+      PostgreSQL WAL storage layout validation failed.
+    success_msg: >
+      PostgreSQL WAL storage layout verified successfully.
+
+- name: Display PostgreSQL storage layout
+  ansible.builtin.debug:
+    msg:
+      - "Data directory: {{ postgresql_data_dir }}"
+      - "WAL directory: {{ postgresql_wal_dir }}"
+      - "pg_wal link: {{ postgresql_wal_link }}"
+      - "WAL storage: separate filesystem directory"

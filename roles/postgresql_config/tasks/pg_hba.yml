@@ -1,0 +1,10 @@
+---
+- name: Deploy PostgreSQL HBA configuration
+  ansible.builtin.template:
+    src: pg_hba.conf.j2
+    dest: "{{ postgresql_data_dir }}/pg_hba.conf"
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+    mode: "0600"
+    backup: true
+  notify: Restart PostgreSQL

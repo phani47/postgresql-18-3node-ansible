@@ -1,0 +1,45 @@
+---
+- name: Verify PostgreSQL data directory exists
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}"
+  register: postgresql_storage_data_dir
+
+- name: Assert PostgreSQL data directory exists
+  ansible.builtin.assert:
+    that:
+      - postgresql_storage_data_dir.stat.exists
+      - postgresql_storage_data_dir.stat.isdir
+    fail_msg: >
+      PostgreSQL data directory {{ postgresql_data_dir }} does not exist.
+      Step 5 must be completed first.
+    success_msg: >
+      PostgreSQL data directory exists.
+
+- name: Verify PostgreSQL cluster is initialized
+  ansible.builtin.stat:
+    path: "{{ postgresql_data_dir }}/PG_VERSION"
+  register: postgresql_storage_pg_version
+
+- name: Assert PostgreSQL cluster is initialized
+  ansible.builtin.assert:
+    that:
+      - postgresql_storage_pg_version.stat.exists
+    fail_msg: >
+      PostgreSQL cluster is not initialized.
+      Complete Step 5 before running Step 6A.
+    success_msg: >
+      PostgreSQL cluster initialization confirmed.
+
+- name: Check PostgreSQL WAL directory state
+  ansible.builtin.stat:
+    path: "{{ postgresql_wal_link }}"
+    follow: false
+  register: postgresql_storage_wal
+
+- name: Display WAL directory state
+  ansible.builtin.debug:
+    msg:
+      - "WAL path: {{ postgresql_wal_link }}"
+      - "Exists: {{ postgresql_storage_wal.stat.exists }}"
+      - "Directory: {{ postgresql_storage_wal.stat.isdir | default(false) }}"
+      - "Symlink: {{ postgresql_storage_wal.stat.islnk | default(false) }}"
