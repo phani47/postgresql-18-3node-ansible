@@ -1,0 +1,46 @@
+---
+- name: PostgreSQL 18 Connectivity Precheck
+  hosts: postgresql
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Display node identity
+      ansible.builtin.debug:
+        msg:
+          - "Hostname: {{ ansible_facts['hostname'] }}"
+          - "FQDN: {{ ansible_facts['fqdn'] }}"
+          - "IP addresses: {{ ansible_facts['all_ipv4_addresses'] }}"
+
+    - name: Check PostgreSQL port is listening
+      ansible.builtin.command:
+        cmd: ss -lntp
+      register: postgresql_listeners
+      changed_when: false
+
+    - name: Display PostgreSQL listeners
+      ansible.builtin.debug:
+        var: postgresql_listeners.stdout_lines
+
+    - name: Check PostgreSQL service status
+      ansible.builtin.command:
+        cmd: systemctl is-active postgresql-18
+      register: postgresql_service_status
+      changed_when: false
+      failed_when: postgresql_service_status.rc != 0
+
+    - name: Verify local PostgreSQL readiness
+      ansible.builtin.command:
+        cmd: >-
+          runuser -u postgres --
+          /usr/pgsql-18/bin/pg_isready
+          -p 5432
+      register: postgresql_readiness
+      changed_when: false
+      failed_when: postgresql_readiness.rc != 0
+
+    - name: Display connectivity results
+      ansible.builtin.debug:
+        msg:
+          - "Service: {{ postgresql_service_status.stdout }}"
+          - "Readiness: {{ postgresql_readiness.stdout }}"

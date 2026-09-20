@@ -1,0 +1,16 @@
+---
+- name: Configure PostgreSQL 18 Cluster
+  hosts: postgresql
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: preflight
+    - role: cleanup
+    - role: os_prepare
+    - role: postgresql_install
+    - role: postgresql_init
+    - role: postgresql_storage
+    - role: postgresql_config
+    - role: postgresql_service
+    - role: postgresql_access

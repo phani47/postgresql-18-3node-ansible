@@ -1,0 +1,6 @@
+---
+- name: Reload PostgreSQL
+  become: true
+  ansible.builtin.systemd:
+    name: postgresql-18
+    state: reloaded

@@ -1,0 +1,7 @@
+---
+postgresql_access_client_ips:
+  - 192.168.56.132/32
+  - 192.168.56.134/32
+  - 192.168.56.136/32
+
+postgresql_access_auth_method: scram-sha-256

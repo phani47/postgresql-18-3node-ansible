@@ -1,0 +1,8 @@
+---
+- name: PostgreSQL 18 Access Configuration
+  hosts: postgresql
+  become: true
+  gather_facts: false
+
+  roles:
+    - role: postgresql_access
